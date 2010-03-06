@@ -1,5 +1,7 @@
-# external
-require 'active_resource'
+require 'rubygems'
+# patches are for specific AR version
+gem 'activeresource' , '=2.3.4'
+
 unless RUBY_PLATFORM =~ /java/
   require 'yajl'
   require 'rufus-json'
