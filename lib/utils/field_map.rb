@@ -5,6 +5,8 @@ module SKApi
     # with a hash which maps the fields between those two.
     # If you use such a mapping both of your objects MUST respond to the method
     # names passed in the mapping-table(hash)
+    #
+    # When an object is updated you can check the #log for changes
     # ==== Example
     #
     #  contact_map = {

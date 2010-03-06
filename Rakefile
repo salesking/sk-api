@@ -1,6 +1,24 @@
+require 'rubygems'
 require 'rake'
 require 'rake/rdoctask'
 require 'spec/rake/spectask'
+
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gem|
+    gem.name = "sk-api"
+    gem.summary = %Q{Interact with SalesKing}
+    gem.description = %Q{Interact with SalesKing}
+    gem.email = "gl@salesking.eu"
+    gem.homepage = "http://github.com/salesking/sk-api"
+    gem.authors = ["Georg Leciejewski"]
+    gem.add_development_dependency "rspec", ">= 0"
+    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+  end
+  Jeweler::GemcutterTasks.new
+rescue LoadError
+  puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
+end
 
 desc 'Default: run specs.'
 task :default => :spec
@@ -20,10 +38,10 @@ Spec::Rake::SpecTask.new(:coverage) do |t|
   t.rcov_opts = ['--exclude', 'spec,/var/lib/gems']
 end
 
-desc 'Generate documentation for the sk_api_base plugin.'
+desc 'Generate sk-api documentation.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'SkApiBase'
+  rdoc.title    = 'SalesKing-Api'
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.rdoc_files.include('README')
   rdoc.rdoc_files.include('lib/**/*.rb')
