@@ -1,6 +1,6 @@
 module SKApi
   module Resources
-    class CreditNote < SKApi::Resources::Base
+    class Invoice < SKApi::Resources::Base
 
       def save
         save_with_validation
@@ -12,7 +12,7 @@ module SKApi
 
       def self.schema
         { "type" => "object",
-          "properties" => SKApi::Resources::CreditNote.schema_props}
+          "properties" => SKApi::Resources::Invoice.schema_props}
       end
 
       def self.schema_props
