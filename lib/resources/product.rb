@@ -3,15 +3,7 @@ module SKApi
     class Product < SKApi::Resources::Base
 
       def save
-#        validate_schema
         save_with_validation
-      end
-
-      # not realy stable yet
-      def validate_schema
-        json = self.to_json
-        obj = Rufus::Json.decode(json)
-        JSON::Schema.validate(obj,  SKApi::Resources::Product.schema)
       end
 
       def self.schema
@@ -20,9 +12,7 @@ module SKApi
       end
 
       def self.schema_props
-       {
-#	category
-#	template_id
+        {
            "id"           => {"type" => "string", "identity" => true , "readonly" => true},
            "number"       => {"type" => "string", "optional" => true},
            "name"         => {"type" => "string"},

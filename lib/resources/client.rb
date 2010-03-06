@@ -3,7 +3,6 @@ module SKApi
     class Client < SKApi::Resources::Base
 
       def save
-#        validate_schema
         save_with_validation
       end
 

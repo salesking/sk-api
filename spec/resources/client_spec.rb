@@ -29,9 +29,14 @@ describe SKApi::Resources::Client, "in general" do
     client.errors.full_messages.should ==  ["Bank iban is invalid"]
   end
 
-  it "should find a client" do
+  it "should find a single client" do
     client = SKApi::Resources::Client.find(@client.id)
     client.organisation.should == @client.organisation
+  end
+
+  it "should find clients" do
+    clients = SKApi::Resources::Client.find(:all)
+    clients.should_not be_empty
   end
 
   it "should edit a client" do
@@ -47,7 +52,7 @@ describe SKApi::Resources::Client, "in general" do
     @client.organisation = ''
     @client.save.should == false
     @client.errors.count.should == 1
-    @client.errors.on_base.should ==  "<p>clients.errors.fill_name_or_organisation</p>"
+    @client.errors.on_base.should == "Organisation or lastname must be present."
   end
 
   it "should validate raw json object with schema" do

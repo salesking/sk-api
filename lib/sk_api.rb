@@ -1,16 +1,15 @@
 require 'rubygems'
+require 'active_resource'
 # patches are for specific AR version
-gem 'activeresource' , '=2.3.4'
+#gem 'activeresource' , '=2.3.4'
 
 unless RUBY_PLATFORM =~ /java/
   require 'yajl'
   require 'rufus-json'
-
   Rufus::Json.backend = :yajl
 else
   require 'json'
   require 'rufus-json'
-
   Rufus::Json.backend = :json
 end
 
