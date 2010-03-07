@@ -12,7 +12,7 @@ module SKApi
       end
 
       def self.schema_props
-       {
+        {
            "id"             => {"type" => "string", "identity" => true , "readonly" => true},
            "position"       => {"type" => "integer"},
            "product_id"     => {"type" => "string", "optional" => true},
@@ -23,9 +23,10 @@ module SKApi
            "price_single"   => {"type" => "number"},
            "discount"       => {"type" => "number", "optional" => true},
            "tax"            => {"type" => "number", "optional" => true},
+           "use_product"    => {"type" => "boolean", "optional" => true},
            "created_at"     => {"type" => "string", "format" =>"date-time", "optional" => true, "readonly" => true},
            "updated_at"     => {"type" => "string", "format" =>"date-time", "optional" => true, "readonly" => true}
-         }
+        }
       end
     end
   end

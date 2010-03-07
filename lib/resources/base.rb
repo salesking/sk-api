@@ -13,10 +13,10 @@ module SKApi
 
       # Define the connection to be used when talking to a salesking server
       def self.set_connection(opts)
-        self.site = opts[:site]        #"http://demo.salesking.local:3000/api/"
-        self.user = opts[:user]        # "demo@salesking.eu"
-        self.password = opts[:password]   #"demo"
-        self.format = opts[:format].to_sym    #:json
+        self.site     = opts[:site]
+        self.user     = opts[:user]
+        self.password = opts[:password]
+        self.format   = opts[:format].to_sym
       end
 
     end

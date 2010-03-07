@@ -6,13 +6,6 @@ module SKApi
         save_with_validation
       end
 
-      # not realy stable yet
-      def validate_schema
-        json = self.to_json
-        obj = Rufus::Json.decode(json)
-        JSON::Schema.validate(obj,  SKApi::Resources::Client.schema)
-      end
-
       def self.schema
         { "type" => "object",
         "properties" => SKApi::Resources::Client.schema_props}

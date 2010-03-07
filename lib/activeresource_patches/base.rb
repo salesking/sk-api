@@ -20,25 +20,14 @@ module ActiveResource
       end
     end
 
-    # Ooverridden to grab the data(clients- collection) from json:
+    # Ooverridden to grab the data(= clients-collection) from json:
     # { 'collection'=> will_paginate infos,
     #   'links' => prev/next links
-    #   >> 'clients'=> [data], <<
+    #   'clients'=> [data], << what we need
     # }
     def self.instantiate_collection(collection, prefix_options = {})
       collection = collection[ self.element_name.pluralize ] if collection.is_a?(Hash)
       collection.collect! { |record| instantiate_record(record, prefix_options) }
-    end
-  end
-end
-
-# Force json decoding using Rufus
-module ActiveResource
-  module Formats
-    module JsonFormat
-      def decode(json)        
-        Rufus::Json.decode(json)
-      end
     end
   end
 end
