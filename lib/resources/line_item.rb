@@ -23,7 +23,7 @@ module SKApi
            "price_single"   => {"type" => "number"},
            "discount"       => {"type" => "number", "optional" => true},
            "tax"            => {"type" => "number", "optional" => true},
-           "use_product"    => {"type" => "boolean", "optional" => true},
+           "use_product"    => {"type" => "integer", "optional" => true},
            "created_at"     => {"type" => "string", "format" =>"date-time", "optional" => true, "readonly" => true},
            "updated_at"     => {"type" => "string", "format" =>"date-time", "optional" => true, "readonly" => true}
         }

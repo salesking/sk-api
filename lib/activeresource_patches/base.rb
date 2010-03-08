@@ -31,3 +31,14 @@ module ActiveResource
     end
   end
 end
+
+# Force json decoding using Rufus
+module ActiveResource
+  module Formats
+    module JsonFormat
+      def decode(json)
+        Rufus::Json.decode(json)
+      end
+    end
+  end
+end

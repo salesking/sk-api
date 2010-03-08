@@ -35,7 +35,7 @@ module SKApi
            "lock_version"   => {"type" => "integer", "optional" => true, "readonly" => true},
            "client_id"      => {"type" => "string"},
            "client"         => {"type" => "object", "properties" => SKApi::Resources::Client.schema_props, "optional" => true, "readonly" => true},
-           "line_items"     => {"type" => "array","properties" => SKApi::Resources::LineItem.schema_props, "optional" => true,},
+           "line_items"     => {"type" => "array","properties" => SKApi::Resources::LineItem.schema_props, "optional" => true}
          }
       end
 

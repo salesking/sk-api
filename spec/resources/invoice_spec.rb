@@ -115,9 +115,65 @@ describe SKApi::Resources::Invoice, "with line items" do
 
   it "should add line item" do
     item = SKApi::Resources::LineItem.new( {  :position=>2, :description => 'Goat-Pie', :price_single => 10, :quantity=>10} )
+    product = SKApi::Resources::Product.new(:name=>'Eis am Stiel', :price => 1.50, :tax=>19, :description => 'Mmmhh lecker Eis')
+    product.save.should be_true
+    item1 = SKApi::Resources::LineItem.new( { :position=>3, :use_product => 1, :product_id=> product.id, :quantity => 10 } )
     @doc.line_items << item
+    @doc.line_items << item1
     @doc.save
-    @doc.line_items.length.should == 2
+    @doc.line_items.length.should == 3
+    @doc.price_total.should == 235.0
+  end
+
+end
+=begin
+describe SKApi::Resources::Invoice, "with line items" do
+
+  before :all do
+    @client = SKApi::Resources::Client.new(:organisation=>'Credit Note API-Tester')
+    @client.save.should be_true
+    #setup test doc to work with
+    @doc = SKApi::Resources::Invoice.new(:client_id => @client.id,
+                                          :line_items => [{ :position=>1, :description => 'Pork Chops', :quantity => 12, :price_single =>'10.00' }] )
+    @doc.save.should be_true
+  end
+
+  after :all do
+    delete_test_data(@doc, @client)
+  end
+
+  it "should create a line item" do
+    @doc.line_items.length.should == 1
+    @doc.line_items.first.description.should == 'Pork Chops'
+    @doc.price_total.should == 120.0
+  end
+
+  it "should edit line item" do
+    @doc.line_items[0].description = 'Egg Sandwich'
+    @doc.save
+    @doc.line_items.length.should == 1
+    @doc.line_items.first.description.should == 'Egg Sandwich'
+  end
+
+  it "should add line item" do
+    item = SKApi::Resources::LineItem.new( {  :position=>2, :description => 'Goat-Pie', :price_single => 10, :quantity=>10} )
+    product = SKApi::Resources::Product.new(:name=>'Eis am Stiel', :price => 1.50, :tax=>19, :description => 'Mmmhh lecker Eis')
+    product.save.should be_true
+    item1 = SKApi::Resources::LineItem.new( { :position=>3, :use_product => 1, :quantity => 10 } )
+    @doc.line_items << item
+    @doc.line_items << item1
+    @doc.save
+    @doc.line_items.length.should == 3
     @doc.price_total.should == 220.0
   end
-end
+
+  xit "should add line item and use product information" do
+
+    @doc.line_items << item
+    @doc.save
+    @doc.line_items.length.should == 3
+    @doc.price_total.should == 15.0
+
+    product.destroy
+  end
+=end
