@@ -13,9 +13,6 @@ else
   Rufus::Json.backend = :json
 end
 
-#vendored
-require File.dirname(__FILE__) + '/../vendor/jsonschema-1.0.0/lib/jsonschema'
-
 # utilities
 require File.dirname(__FILE__) + '/utils/field_map'
 require File.dirname(__FILE__) + '/utils/serializer'
