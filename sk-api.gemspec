@@ -36,18 +36,14 @@ Gem::Specification.new do |s|
      "lib/sk_api.rb",
      "lib/utils/field_map.rb",
      "lib/utils/serializer.rb",
+     "sk-api.gemspec",
      "spec/resources/client_spec.rb",
      "spec/resources/credit_note_spec.rb",
      "spec/resources/invoice_spec.rb",
      "spec/resources/product_spec.rb",
      "spec/spec_helper.rb",
      "spec/utils/field_map_spec.rb",
-     "tasks/sk_api_tasks.rake",
-     "vendor/jsonschema-1.0.0/README.rdoc",
-     "vendor/jsonschema-1.0.0/Rakefile",
-     "vendor/jsonschema-1.0.0/lib/jsonschema.rb",
-     "vendor/jsonschema-1.0.0/ruby-jsonschema.gemspec",
-     "vendor/jsonschema-1.0.0/test/jsonschema_test.rb"
+     "tasks/sk_api_tasks.rake"
   ]
   s.homepage = %q{http://github.com/salesking/sk-api}
   s.rdoc_options = ["--charset=UTF-8"]
