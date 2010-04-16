@@ -1,3 +1,10 @@
+#temp patch as_json on decimals introduced by rails. which collpases with ruby-yail
+class BigDecimal
+  def as_json
+    self.to_f
+  end
+end
+
 module ActiveResource
   # Overridden methods to suit SalesKing.
   # Some changes might be kicked when AR 3.0 is out
