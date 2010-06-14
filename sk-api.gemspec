@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{sk-api}
-  s.version = "1.0.5"
+  s.version = "1.0.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Georg Leciejewski"]
@@ -43,7 +43,12 @@ Gem::Specification.new do |s|
      "spec/resources/product_spec.rb",
      "spec/spec_helper.rb",
      "spec/utils/field_map_spec.rb",
-     "tasks/sk_api_tasks.rake"
+     "tasks/sk_api_tasks.rake",
+     "vendor/jsonschema-1.0.0/README.rdoc",
+     "vendor/jsonschema-1.0.0/Rakefile",
+     "vendor/jsonschema-1.0.0/lib/jsonschema.rb",
+     "vendor/jsonschema-1.0.0/ruby-jsonschema.gemspec",
+     "vendor/jsonschema-1.0.0/test/jsonschema_test.rb"
   ]
   s.homepage = %q{http://github.com/salesking/sk-api}
   s.rdoc_options = ["--charset=UTF-8"]

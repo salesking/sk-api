@@ -25,11 +25,12 @@ describe SKApi::Resources::CreditNote, "in general" do
     }.should raise_error(ActiveResource::ResourceNotFound)
   end
 
-  it "should create a doc" do
+  it "should create a doc and use default before after text" do
     @doc.errors.should be_empty
+    @doc.notes_before.should_not be_empty
     @doc.new?.should be_false
   end
-
+ 
   it "should fail create a doc" do
     doc = SKApi::Resources::CreditNote.new()
     doc.save.should == false
