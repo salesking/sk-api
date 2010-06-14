@@ -1,7 +1,7 @@
 = SalesKing Api
 
 This plugin is used internally by SalesKing to deliver the API and 
-can be used externally as an API client. The code is used in production at
+can be used externally as an API client. The code is used in production f.ex.at
 https://www.SalesKing, http://texprovider.de and http://planio.de
 
 The SalesKing API client uses ActiveResource, with some fixes due to json parsing.
@@ -17,13 +17,121 @@ and support.
 
     gem install sk-api
 
-== Example
+== Usage
 
-	client = SkApi::Resources::Client.new(:last_name=>'Eder')
-	client.first_name = "Meister"
-	client.save
+SalesKing's api interface is RESTful(mostly) and returns & accepts JSON data.
+All resources such as clients, invoices, products,.. can be accessed via URL's
+through standard HTTP methods such as GET, POST, PUT and DELETE.
 
-For more information on how to use take a look into the specs.
+To give it quick shot, point your browser to my-account.salesking.eu/api/clients
+(while beeing logged in) and you will see the JSON in the response.
+This is an example of a GET-request issued by your browser.
+
+<b>Request Method overview:</b>
+GET => read
+POST => create new data
+PUT => update data
+DELETE => delete data
+
+Want to know more about REST style webservices?
+=> http://en.wikipedia.org/wiki/Representational_State_Transfer
+=> http://www.google.com/search?q=REST+site%3Awww.infoq.com
+
+=== Authentification & Safety
+
+Authentification is done with HTTP basic using your SalesKing login email and password.
+For a production environment it is advisable to create a user, per api
+client-software, and restrict his rights with our build in role-system.
+
+=== Toolz
+
+Since browsers do not support PUT/DELETE methods you can use CURL, a linux
+command-line http client, for testing. And of course any http library supporting
+http-basic-auth can be used.
+
+* JSONView  FF-Plugin - view json in firefox https://addons.mozilla.org/de/firefox/addon/10869/
+* JSONovich FF-Plugin -  https://addons.mozilla.org/de/firefox/addon/10122/
+* A java GUI REST client http://code.google.com/p/rest-client/
+
+=== GET / Show data
+
+Get a list of resources:
+    GET xy.salesking.eu/api/invoices
+
+Get a single resource
+    GET xy.salesking.eu/invoices/:id
+
+Using CURL
+
+  curl -u your@login-mail.com:password \
+  https://demo.salesking.eu/clients.json
+
+Returned JSON data for a listings, abbreviated:
+    # Top most information
+    {
+    # array of resources => clients
+    "clients": [           
+       # a single resource
+      { "client": {        
+        "number": "0800013", ..
+        #links to actions for the resource (comming soon)
+        "links":{}             
+      }, ...
+    ],
+    # information about the collections
+    "collection": { }
+    # links for the collection: prevnext
+    "links": {       
+      "prev": "/api/clients?page=0",
+      "next": "/api/clients?page=2",
+      "self": "/api/clients?page=1"
+      }, 
+    }
+
+
+=== POST / Create data
+
+
+=== DELETE / kill data
+
+To delete a record simply issue a DELETE request to a resource url:
+
+    DELETE https://demo.salesking.eu/clients/:id
+
+== Ruby Example
+
+Since the sk-api gem provides a wrapper around the whole url/request stuff its
+pretty straight forward to use:
+
+    class SkMiddleware
+
+      def initialize()
+        # init api connection => just an example depending on your code structure do it wherever you want
+        set_api_connection
+      end
+
+      def create_client(last_name)
+        # create a new client object
+        client = SkApi::Resources::Client.new(:last_name=> last_name)
+        # set more data
+        client.first_name = "Meister"
+        # save it, which also does the remote saving action
+        client.save
+      end
+
+      def set_api_connection
+        SKApi::Resources::Base.set_connection({
+          :site     => 'my_sub.salesking.eu',
+          :user     => 'demo@salesking.eu',
+          :password => 'password',
+          :format   => :json # symbol expected
+        })
+      end
+    end
+    ##### use it
+    a = SkMiddleware.new
+    a.create_client('eder')
+
 
 == Salesking API Resources
 
@@ -34,7 +142,9 @@ Right now the following resources are available:
 * products
 * credit_notes
 
-== Tests
+For more information on how to use take a look into the tests/specs.
+
+== Tests / Specs
 
 To run the test you must insert some credentials into the spec helper. 
 We will gladly provide you with a test account on one of our development 
