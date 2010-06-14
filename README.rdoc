@@ -67,35 +67,60 @@ Using CURL
   https://demo.salesking.eu/clients.json
 
 Returned JSON data for a listings, abbreviated:
-    # Top most information
     {
-    # array of resources => clients
-    "clients": [           
-       # a single resource
-      { "client": {        
+    "clients": [                    # array of resources => clients
+      { "client": {                 # a single resource
         "number": "0800013", ..
-        #links to actions for the resource (comming soon)
-        "links":{}             
+        "links":{}                  #links to actions for the resource (comming soon)
       }, ...
     ],
-    # information about the collections
-    "collection": { 
+    collection": {                  # information about the collection
       "total_pages": 1,
       "total_entries": 3,
       "current_page": 1,
       "per_page": 30
     },
-    # links for the collection: prevnext
-    "links": {       
+    "links": {                      # links for the collection
       "prev": "/api/clients?page=0",
       "next": "/api/clients?page=2",
       "self": "/api/clients?page=1"
       }, 
     }
 
+==== Filtering
+
+Filtering data can be achived by adding a filter parameter to the url. 
+
+All objects which can be tagged(clients, documents, products) can be filter by a tag param, taking one or multiple tags:
+    GET xy.salesking.eu/api/invoices?filter[tags]=Agentur
+    GET xy.salesking.eu/api/invoices?filter[tags]=Agentur Grafik
+    # find all objects without tags
+    GET xy.salesking.eu/api/invoices?filter[not_tagged]=1
+
+All objects have a q-search available. The fields to be searched in can be seen inside SalesKing, behind the search field above list.
+    GET xy.salesking.eu/api/invoices?q=0800013
+    GET xy.salesking.eu/api/invoices?filter[q]=0800013
+
+Document specific filters
+  # find all documents for a client
+  GET xy.salesking.eu/api/invoices?filter[client]=:client_id
+
+Client filter:
+  # find clients whose
+  GET xy.salesking.eu/api/clients?filter[letter]=A
 
 === POST / Create data
 
+To create a resource you can use the gem with its methods or make a post request containing the json for a single resource.
+The JSON format can be seen in each of the resources: http://github.com/salesking/sk-api/tree/master/lib/resources/
+
+For more information on how to use take a look into the tests/specs:
+
+http://github.com/salesking/sk-api/tree/master/spec/resources/
+
+=== PUT / Update data
+
+..comming
 
 === DELETE / kill data
 
@@ -108,7 +133,8 @@ To delete a record simply issue a DELETE request to a resource url:
 Since the sk-api gem provides a wrapper around the whole url/request stuff its
 pretty straight forward to use:
 
-    class SkMiddleware
+    class SomeMiddleware
+      include SKApi::Resources
 
       def initialize()
         # init api connection => just an example depending on your code structure do it wherever you want
@@ -133,8 +159,9 @@ pretty straight forward to use:
         })
       end
     end
+
     ##### use it
-    a = SkMiddleware.new
+    a = SomeMiddleware.new
     a.create_client('eder')
 
 
@@ -147,7 +174,8 @@ Right now the following resources are available:
 * products
 * credit_notes
 
-For more information on how to use take a look into the tests/specs.
+See classes here:
+http://github.com/salesking/sk-api/tree/master/lib/resources/
 
 == Tests / Specs
 
