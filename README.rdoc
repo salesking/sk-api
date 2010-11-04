@@ -20,10 +20,10 @@ and support.
 == Usage
 
 SalesKing's api interface is RESTful(mostly) and returns & accepts JSON data.
-All resources such as clients, invoices, products,.. can be accessed via URL's
-through standard HTTP methods such as GET, POST, PUT and DELETE.
+All resources such as clients, invoices, products can be accessed via URL's
+through standard HTTP methods GET, POST, PUT and DELETE.
 
-To give it quick shot, point your browser to my-account.salesking.eu/api/clients
+To give it quick shot, point your browser to my-account.salesking.eu/api/clients.json
 (while beeing logged in) and you will see the JSON in the response.
 This is an example of a GET-request issued by your browser.
 
@@ -106,13 +106,56 @@ Document specific filters
   GET xy.salesking.eu/api/invoices?filter[client]=:client_id
 
 Client filter:
-  # find clients whose
+  # find clients organisation or lastname starting with A
   GET xy.salesking.eu/api/clients?filter[letter]=A
 
 === POST / Create data
 
-To create a resource you can use the gem with its methods or make a post request containing the json for a single resource.
+To create a resource you can use the gem with its methods or make a POST request containing the json for a single resource.
 The JSON format can be seen in each of the resources: http://github.com/salesking/sk-api/tree/master/lib/resources/
+
+  POST https://my-sub.salesking.eu/invoices.json content-type application/json
+
+This a minimal json to create a draft invoice:
+
+  {"invoice": {
+    "due_days": 14,
+    "line_items": [
+      {
+          "quantity_unit": "Stuck",
+          "tax": 19,
+          "price_single": 0,
+          "position": 1,
+          "quantity": 21,
+          "description": "dep38usabq4Boxen kostenlos"
+      },
+      {
+        "quantity_unit": "Stuck",
+        "tax": 19,
+        "price_single": 0.042022,
+        "position": 2,
+        "quantity": 21,
+        "description": "dep38usabq4 Boxen"
+      }
+    ],
+    "title": "Dabei",
+    "client_id": "c5d5xIwZGr3R56abxfpGMl",
+    "address_field": "Wurst Bolle\nHalve-Hahn Alle 4711\n50733 Köln-Nippes"
+  }}
+
+Some quick hints on document creation:
+
+* The line items array does not need prefixes .. (sry little inconsistency here)
+* Dates are formatted like  <tt>yyyy-mm-dd 2010-09-08</tt>
+* <tt>"price_total": 0.88,  "price_tax": 0.167</tt> can be ommited are calculated by sk => read only
+* <tt>due_date</tt> if left out will be auto calculated from due days. If date and due date are given due_days are not taken into consideration.
+* <tt>status: draft</tt> is default, so can be omitted
+* <tt>client_id</tt> must be given as uuid of the client object
+* line items with quantity of 0 are kicked
+* If you create the doc as draft you can leave out any dates. When “opened” in salesking the date will be set and due date is calculated from due_days
+* If you create the invoice as "open" you must set a number(and date), by now there is no api method to get the next number.
+* The proposed workflow is to create the document as draft and continue (open/send/close) in SalesKing.
+
 
 For more information on how to use take a look into the tests/specs:
 
@@ -120,7 +163,16 @@ http://github.com/salesking/sk-api/tree/master/spec/resources/
 
 === PUT / Update data
 
-..comming
+To Update a client:
+ 
+PUT ( application/json ) to ../api/clients/:id
+  {
+    'client': 
+    { 
+      'gender':'male',
+      'first_name': "Andrew"
+    }
+  }
 
 === DELETE / kill data
 
