@@ -16,7 +16,7 @@ module SKApi
            "id"       => {"type" => "string", "identity" => true, "readonly" => true},
            "address1" => {"type" => "string", "optional" => true},
            "address2" => {"type" => "string", "optional" => true},
-           "city"     => {"type" => "string", "optional" => true},
+           "city"     => {"type" => "string"},
            "country"  => {"type" => "string", "optional" => true},
            "state"    => {"type" => "string", "optional" => true},
            "zip"      => {"type" => "string", "optional" => true},

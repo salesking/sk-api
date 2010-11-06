@@ -27,7 +27,7 @@ module ActiveResource
       end
     end
 
-    # Ooverridden to grab the data(= clients-collection) from json:
+    # Overridden to grab the data(= clients-collection) from json:
     # { 'collection'=> will_paginate infos,
     #   'links' => prev/next links
     #   'clients'=> [data], << what we need
@@ -40,12 +40,12 @@ module ActiveResource
 end
 
 # Force json decoding using Rufus
-module ActiveResource
-  module Formats
-    module JsonFormat
-      def decode(json)
-        Rufus::Json.decode(json)
-      end
-    end
-  end
-end
+#module ActiveResource
+#  module Formats
+#    module JsonFormat
+#      def decode(json)
+#        Rufus::Json.decode(json)
+#      end
+#    end
+#  end
+#end

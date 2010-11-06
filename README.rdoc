@@ -195,7 +195,7 @@ pretty straight forward to use:
 
       def create_client(last_name)
         # create a new client object
-        client = SkApi::Resources::Client.new(:last_name=> last_name)
+        client = SKApi::Resources::Client.new(:last_name=> last_name)
         # set more data
         client.first_name = "Meister"
         # save it, which also does the remote saving action

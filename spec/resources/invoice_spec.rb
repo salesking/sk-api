@@ -109,7 +109,7 @@ describe SKApi::Resources::Invoice, "with line items" do
     @client.save.should be_true
     #setup test doc to work with
     @doc = SKApi::Resources::Invoice.new(:client_id => @client.id,
-                                          :line_items => [{ :position=>1, :description => 'Pork Chops', :quantity => 12, :price_single =>'10.00' }] )
+                                         :line_items => [{ :position=>1, :description => 'Pork Chops', :quantity => 12, :price_single =>'10.00' }] )
     @doc.save.should be_true
   end
 

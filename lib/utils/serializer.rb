@@ -6,7 +6,7 @@ module SKApi
     # f.ex. in the clients api controller
     #   => SKApi::Resources::Client.to_json(a_client)
     # This way you can keep your API client up to date by using the resources and
-    # relying on  SKApi::Resources::Client.api_fields
+    # relying on  SKApi::Resources::Client.schema
     module Serializer
       def self.included(base)
         base.extend ClassMethods

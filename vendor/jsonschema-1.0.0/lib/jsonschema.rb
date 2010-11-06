@@ -280,7 +280,6 @@ module JSON
     # {'properties'=>{}}
     def validate instance, schema
       schema ||= instance['$schema'] # self defined schema
-#      puts schema.inspect
       check_property(instance, schema, 'self', @tree)
       return instance
     end

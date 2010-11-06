@@ -59,9 +59,10 @@ describe SKApi::Resources::Client, "in general" do
     client = SKApi::Resources::Client.find(@client.id)
     # convert to json and read raw without activeresource assigning classes
     json = client.to_json
-    obj = Rufus::Json.decode(json)
+    obj = ActiveSupport::JSON.decode(json)
+#     puts obj['client']['organisation']
     lambda {
-      JSON::Schema.validate(obj,  SKApi::Resources::Client.schema)
+      JSON::Schema.validate(obj['client'],  SKApi::Resources::Client.schema)
     }.should_not raise_error
   end
 

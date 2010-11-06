@@ -13,7 +13,7 @@ module SKApi
 
       def self.schema_props
        {
-           "id"           => {"type" => "string", "identity" => true , "readonly" => true},
+           "id"           => {"type" => "string", "identity" => true, "optional" => true, "readonly" => true},
            "number"       => {"type" => "string", "optional" => true},
            "organisation" => {"type" => "string"},
            "first_name"   => {"type" => "string", "optional" => true},
@@ -45,7 +45,7 @@ module SKApi
            "created_at"     => {"type" => "string", "format" =>"date-time", "optional" => true, "readonly" => true},
            "updated_at"     => {"type" => "string", "format" =>"date-time", "optional" => true, "readonly" => true},
            "address_field"  => {"type" => "string", "optional" => true, "readonly" => true},
-           "addresses"      => {"type" => "array"},
+           "addresses"      => {"type" => "array","properties" => SKApi::Resources::Address.schema_props, "optional" => true}
          }
       end #schema_props
 

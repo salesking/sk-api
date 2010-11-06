@@ -1,5 +1,5 @@
 module ActiveResource
-   
+
   module Validations
     # Validate a resource and save (POST) it to the remote web service.
     def save_with_validation
@@ -13,7 +13,7 @@ module ActiveResource
         errors.from_json(error.response.body)
       end
       false
-    end   
+    end
   end
 
   class Errors

@@ -1,29 +1,28 @@
-require 'rubygems'
+#require 'rubygems'
 require 'active_resource'
+require 'active_resource/version'
 # patches are for specific AR version
-#gem 'activeresource' , '=2.3.4'
+# switch A-resource patch includes
 
-unless RUBY_PLATFORM =~ /java/
-  require 'yajl'
-  require 'rufus-json'
-  Rufus::Json.backend = :yajl
-else
-  require 'json'
-  require 'rufus-json'
-  Rufus::Json.backend = :json
+if ActiveResource::VERSION::MAJOR == 3
+  require 'patches/ar3/base'
+  require 'patches/ar3/validations'
+elsif ActiveResource::VERSION::MAJOR < 3
+  require 'patches/ar2/validations'
+  require 'patches/ar2/base'
 end
 
 # utilities
-require File.dirname(__FILE__) + '/utils/field_map'
-require File.dirname(__FILE__) + '/utils/serializer'
+require 'utils/field_map'
+require 'utils/serializer'
 
 #resources
-require File.dirname(__FILE__) + '/activeresource_patches/validations'
-require File.dirname(__FILE__) + '/activeresource_patches/base'
-require File.dirname(__FILE__) + '/resources/base'
-require File.dirname(__FILE__) + '/resources/product'
-require File.dirname(__FILE__) + '/resources/client'
-require File.dirname(__FILE__) + '/resources/address'
-require File.dirname(__FILE__) + '/resources/invoice'
-require File.dirname(__FILE__) + '/resources/credit_note'
-require File.dirname(__FILE__) + '/resources/line_item'
+require 'resources/base'
+require 'resources/product'
+require 'resources/client'
+require 'resources/address'
+require 'resources/invoice'
+require 'resources/credit_note'
+require 'resources/line_item'
+
+# TODO before post kick empty fields and readonly's

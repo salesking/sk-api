@@ -22,7 +22,6 @@ module SKApi
            "quantity_unit"=> {"type" => "string", "optional" => true},
            "tag_list"     => {"type" => "string", "optional" => true},
            "lock_version" => {"type" => "integer", "readonly" => true, "optional" => true},
-           "published_at" => {"type" => "string", "format" =>"date", "optional" => true},
            "created_at"   => {"type" => "string", "format" =>"date-time", "optional" => true, "readonly" => true },
            "updated_at"   => {"type" => "string", "format" =>"date-time", "optional" => true, "readonly" => true },
          }
