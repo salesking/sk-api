@@ -4,6 +4,7 @@ module JSON
   class Schema
     VERSION = '2.0.0'
     class ValueError < Exception;end
+    class SchemaError < Exception;end
     class Undefined;end
     TypesMap = {
       "string"  => String,
@@ -22,179 +23,164 @@ module JSON
     end
 
     def check_property value, schema, key, parent
-      if schema
-#        if @interactive && schema['readonly']
-#          raise ValueError, "#{key} is a readonly field , it can not be changed"
-#        end
-
-        if schema['id']
-          @refmap[schema['id']] = schema
+      return unless schema
+      # if id field is present, set refmap to schema
+      @refmap[schema['id']] = schema if schema['id']
+      # recurse with extended scheme
+      check_property(value, schema['extends'], key, parent) if schema['extends']
+      #
+      if value == Undefined
+        # value is NOT optional 
+        raise ValueError, "#{key} is missing and it is not optional" unless schema['optional']     
+        # a default value ??
+        if @interactive && !parent.include?(key) && !schema['default'].nil? && !schema["readonly"]
+          parent[key] = schema['default']
         end
+      else # At least not undefined
+        # type given, validates if value is of given type(Hash, Array, String, ...)
+        # if val ist NOT NIL and required
+        check_type(value, schema['type'], key, parent) if schema['type'] #&& !value.nil? && !schema['optional']
 
-        if schema['extends']
-          check_property(value, schema['extends'], key, parent)
+        # disallowed value type given
+        if schema['disallow']
+          flag = true
+          begin
+            check_type(value, schema['disallow'], key, parent)
+          rescue ValueError
+            flag = false
+          end
+          raise ValueError, "disallowed value was matched" if flag
         end
-
-        if value == Undefined
-          unless schema['optional']
-            raise ValueError, "#{key} is missing and it is not optional"
-          end
-
-          # default
-          if @interactive && !parent.include?(key) && !schema['default'].nil?
-            unless schema["readonly"]
-              parent[key] = schema['default']
-            end
-          end
-        else
-
-          # type
-          if schema['type']
-            check_type(value, schema['type'], key, parent)
-          end
-
-          # disallow
-          if schema['disallow']
-            flag = true
-            begin
-              check_type(value, schema['disallow'], key, parent)
-            rescue ValueError
-              flag = false
-            end
-            raise ValueError, "disallowed value was matched" if flag
-          end
-
-          unless value.nil?
-            if value.instance_of? Array
-              if schema['items']
-                if schema['items'].instance_of?(Array)
-                  schema['items'].each_with_index {|val, index|
-                    check_property(undefined_check(value, index), schema['items'][index], index, value)
-                  }
-                  if schema.include?('additionalProperties')
-                    additional = schema['additionalProperties']
-                    if additional.instance_of?(FalseClass)
-                      if schema['items'].size < value.size
-                        raise ValueError, "There are more values in the array than are allowed by the items and additionalProperties restrictions."
-                      end
-                    else
-                      value.each_with_index {|val, index|
-                        check_property(undefined_check(value, index), schema['additionalProperties'], index, value)
-                      }
-                    end
+        # dont go further for nil values
+        return if value.nil?
+        if value.instance_of? Array
+          if schema['items']
+            if schema['items'].instance_of?(Array)
+              schema['items'].each_with_index {|val, index|
+                check_property(undefined_check(value, index), schema['items'][index], index, value)
+              }
+              if schema.include?('additionalProperties')
+                additional = schema['additionalProperties']
+                if additional.instance_of?(FalseClass)
+                  if schema['items'].size < value.size
+                    raise ValueError, "There are more values in the array than are allowed by the items and additionalProperties restrictions."
                   end
                 else
                   value.each_with_index {|val, index|
-                    check_property(undefined_check(value, index), schema['items'], index, value)
+                    check_property(undefined_check(value, index), schema['additionalProperties'], index, value)
                   }
                 end
               end
-              if schema['minItems'] && value.size < schema['minItems']
-                raise ValueError, "There must be a minimum of #{schema['minItems']} in the array"
-              end
-              if schema['maxItems'] && value.size > schema['maxItems']
-                raise ValueError, "There must be a maximum of #{schema['maxItems']} in the array"
-              end
-            elsif schema['properties']
-              check_object(value, schema['properties'], schema['additionalProperties'])
-            elsif schema.include?('additionalProperties')
-              additional = schema['additionalProperties']
-              unless additional.instance_of?(TrueClass)
-                if additional.instance_of?(Hash) || additional.instance_of?(FalseClass)
-                  properties = {}
-                  value.each {|k, val|
-                    if additional.instance_of?(FalseClass)
-                      raise ValueError, "Additional properties not defined by 'properties' are not allowed in field '#{k}'"
-                    else
-                      check_property(val, schema['additionalProperties'], k, value)
-                    end
-                  }
+            else
+              value.each_with_index {|val, index|
+                check_property(undefined_check(value, index), schema['items'], index, value)
+              }
+            end
+          end
+          if schema['minItems'] && value.size < schema['minItems']
+            raise ValueError, "There must be a minimum of #{schema['minItems']} in the array"
+          end
+          if schema['maxItems'] && value.size > schema['maxItems']
+            raise ValueError, "There must be a maximum of #{schema['maxItems']} in the array"
+          end
+        elsif schema['properties']
+          check_object(value, schema['properties'], schema['additionalProperties'])
+        elsif schema.include?('additionalProperties')
+          additional = schema['additionalProperties']
+          unless additional.instance_of?(TrueClass)
+            if additional.instance_of?(Hash) || additional.instance_of?(FalseClass)
+              properties = {}
+              value.each {|k, val|
+                if additional.instance_of?(FalseClass)
+                  raise ValueError, "Additional properties not defined by 'properties' are not allowed in field '#{k}'"
                 else
-                  raise ValueError, "additionalProperties schema definition for field '#{}' is not an object"
+                  check_property(val, schema['additionalProperties'], k, value)
                 end
-              end
+              }
+            else
+              raise ValueError, "additionalProperties schema definition for field '#{}' is not an object"
             end
-
-            if value.instance_of?(String)
-              # pattern
-              if schema['pattern'] && !(value =~ Regexp.new(schema['pattern']))
-                raise ValueError, "does not match the regex pattern #{schema['pattern']}"
-              end
-
-              strlen = value.split(//).size
-              # maxLength
-              if schema['maxLength'] && strlen > schema['maxLength']
-                raise ValueError, "may only be #{schema['maxLength']} characters long"
-              end
-
-              # minLength
-              if schema['minLength'] && strlen < schema['minLength']
-                raise ValueError, "must be at least #{schema['minLength']} characters long"
-              end
-            end
-
-            if value.kind_of?(Numeric)
-
-              # minimum + minimumCanEqual
-              if schema['minimum']
-                minimumCanEqual = schema.fetch('minimumCanEqual', Undefined)
-                if minimumCanEqual == Undefined || minimumCanEqual
-                  if value < schema['minimum']
-                    raise ValueError, "must have a minimum value of #{schema['minimum']}"
-                  end
-                else
-                  if value <= schema['minimum']
-                    raise ValueError, "must have a minimum value of #{schema['minimum']}"
-                  end
-                end
-              end
-
-              # maximum + maximumCanEqual
-              if schema['maximum']
-                maximumCanEqual = schema.fetch('maximumCanEqual', Undefined)
-                if maximumCanEqual == Undefined || maximumCanEqual
-                  if value > schema['maximum']
-                    raise ValueError, "must have a maximum value of #{schema['maximum']}"
-                  end
-                else
-                  if value >= schema['maximum']
-                    raise ValueError, "must have a maximum value of #{schema['maximum']}"
-                  end
-                end
-              end
-
-              # maxDecimal
-              if schema['maxDecimal'] && schema['maxDecimal'].kind_of?(Numeric)
-                if value.to_s =~ /\.\d{#{schema['maxDecimal']+1},}/
-                  raise ValueError, "may only have #{schema['maxDecimal']} digits of decimal places"
-                end
-              end
-
-            end
-
-            # enum
-            if schema['enum']
-              unless(schema['enum'].detect{|enum| enum == value })
-                raise ValueError, "does not have a value in the enumeration #{schema['enum'].join(", ")}"
-              end
-            end
-
-            # description
-            if schema['description'] && !schema['description'].instance_of?(String)
-              raise ValueError, "The description for field '#{value}' must be a string"
-            end
-
-            # title
-            if schema['title'] && !schema['title'].instance_of?(String)
-              raise ValueError, "The title for field '#{value}' must be a string"
-            end
-
-            # format
-            if schema['format']
-            end
-
           end
         end
+
+        if value.instance_of?(String)
+          # pattern
+          if schema['pattern'] && !(value =~ Regexp.new(schema['pattern']))
+            raise ValueError, "does not match the regex pattern #{schema['pattern']}"
+          end
+
+          strlen = value.split(//).size
+          # maxLength
+          if schema['maxLength'] && strlen > schema['maxLength']
+            raise ValueError, "may only be #{schema['maxLength']} characters long"
+          end
+
+          # minLength
+          if schema['minLength'] && strlen < schema['minLength']
+            raise ValueError, "must be at least #{schema['minLength']} characters long"
+          end
+        end
+
+        if value.kind_of?(Numeric)
+
+          # minimum + minimumCanEqual
+          if schema['minimum']
+            minimumCanEqual = schema.fetch('minimumCanEqual', Undefined)
+            if minimumCanEqual == Undefined || minimumCanEqual
+              if value < schema['minimum']
+                raise ValueError, "must have a minimum value of #{schema['minimum']}"
+              end
+            else
+              if value <= schema['minimum']
+                raise ValueError, "must have a minimum value of #{schema['minimum']}"
+              end
+            end
+          end
+
+          # maximum + maximumCanEqual
+          if schema['maximum']
+            maximumCanEqual = schema.fetch('maximumCanEqual', Undefined)
+            if maximumCanEqual == Undefined || maximumCanEqual
+              if value > schema['maximum']
+                raise ValueError, "must have a maximum value of #{schema['maximum']}"
+              end
+            else
+              if value >= schema['maximum']
+                raise ValueError, "must have a maximum value of #{schema['maximum']}"
+              end
+            end
+          end
+
+          # maxDecimal
+          if schema['maxDecimal'] && schema['maxDecimal'].kind_of?(Numeric)
+            if value.to_s =~ /\.\d{#{schema['maxDecimal']+1},}/
+              raise ValueError, "may only have #{schema['maxDecimal']} digits of decimal places"
+            end
+          end
+
+        end
+
+        # enum
+        if schema['enum']
+          unless(schema['enum'].detect{|enum| enum == value })
+            raise ValueError, "does not have a value in the enumeration #{schema['enum'].join(", ")}"
+          end
+        end
+
+        # description
+        if schema['description'] && !schema['description'].instance_of?(String)
+          raise ValueError, "The description for field '#{value}' must be a string"
+        end
+
+        # title
+        if schema['title'] && !schema['title'].instance_of?(String)
+          raise ValueError, "The title for field '#{value}' must be a string"
+        end
+
+        # format
+        if schema['format']
+        end
+
       end
     end
 
@@ -227,6 +213,12 @@ module JSON
       }
     end
 
+    # Checks the type of a given value
+    # === Parameter
+    # value<>
+    # type<>
+    # key<>
+    # parent<>
     def check_type value, type, key, parent
       converted_fieldtype = convert_type(type)
       if converted_fieldtype
@@ -279,24 +271,23 @@ module JSON
       end
     end
 
+    # Validates an instance against a given schema
+    # === Parameter
+    # instance<Hash{String=>Mixed}:: The instanciated record as hash with fields
+    # as keys and values of the to be checked types=> Int, String, Bool, Nil...
+    #   {'name'=>'Chubby', :total=>1.234, :=>}
+    # instance<Hash{String=>String, Hash}:: the schema used to validate the instance
+    # {'properties'=>{}}
     def validate instance, schema
-      @tree = {
-        'self' => instance
-      }
-      if schema
-        check_property(instance, schema, 'self', @tree)
-      elsif instance && instance['$schema']
-        # self definition schema
-        check_property(instance, instance['$schema'], 'self', @tree)
-      end
-      return @tree['self']
+      schema ||= instance['$schema'] # self defined schema
+#      puts schema.inspect
+      check_property(instance, schema, 'self', @tree)
+      return instance
     end
 
-    class << self
-      def validate data, schema=nil, interactive=true
-        validator = JSON::Schema.new(interactive)
-        validator.validate(data, schema)
-      end
+    def self.validate data, schema=nil, interactive=true
+      validator = JSON::Schema.new(interactive)
+      validator.validate(data, schema)
     end
-  end
+end
 end
