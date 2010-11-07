@@ -3,6 +3,7 @@ require 'spec'
 require "#{File.dirname(__FILE__)}/../lib/sk_api"
 require File.dirname(__FILE__) + '/../vendor/jsonschema-1.0.0/lib/jsonschema'
 
+puts "Testing with ActiveResource Version: #{ActiveResource::VERSION::STRING}. Make sure this matches the version in your app. .. Yes this sucks!"
 
 def delete_test_data(doc, client)
   doc.destroy

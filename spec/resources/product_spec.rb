@@ -1,4 +1,4 @@
-require "#{File.dirname(__FILE__)}/../spec_helper"
+require 'spec/spec_helper'
 
 describe SKApi::Resources::Product, "in general" do
 
@@ -29,11 +29,10 @@ describe SKApi::Resources::Product, "in general" do
     product.errors.full_messages.should ==  ["Name can't be blank"]
   end
   
-  it "should create a product with price 0.0 when price is missing" do
+  it "should fail create a product without price" do
     product = SKApi::Resources::Product.new(:name => 'No brain')
-    product.save
-#    product.save.should == false
-    product.price.should == 0.0
+    product.save.should == false
+    product.errors.full_messages.should ==  ["Price can't be blank"]
   end
 
   it "should find a product by id" do
@@ -59,9 +58,9 @@ describe SKApi::Resources::Product, "in general" do
     product = SKApi::Resources::Product.find(@product.id)
     # convert to json and read raw without activeresource assigning classes
     json = product.to_json
-    obj = Rufus::Json.decode(json)
+    obj = ActiveSupport::JSON.decode(json)
     lambda {
-      JSON::Schema.validate(obj,  SKApi::Resources::Product.schema)
+      JSON::Schema.validate(obj['product'],  SKApi::Resources::Product.schema)
     }.should_not raise_error
   end
 
@@ -69,7 +68,6 @@ describe SKApi::Resources::Product, "in general" do
     product = SKApi::Resources::Product.find(@product.id)
     # convert to json and read raw without activeresource assigning classes
     hash_obj =  SKApi::Resources::Product.to_hash_from_schema(product)
-#    hash_obj.should == ''
     lambda {
       JSON::Schema.validate(hash_obj['product'],  SKApi::Resources::Product.schema)
     }.should_not raise_error

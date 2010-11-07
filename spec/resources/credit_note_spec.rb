@@ -1,4 +1,4 @@
-require "#{File.dirname(__FILE__)}/../spec_helper"
+require 'spec/spec_helper'
 
 describe SKApi::Resources::CreditNote, "in general" do
 
@@ -45,12 +45,11 @@ describe SKApi::Resources::CreditNote, "in general" do
 
   it "should validate raw json object with schema" do
     doc = SKApi::Resources::CreditNote.find(@doc.id)
-#    doc.number.should=='23'
     # convert to json and read raw without activeresource assigning classes
     json = doc.to_json    
-    obj = Rufus::Json.decode(json)
+    obj = ActiveSupport::JSON.decode(json)
     lambda {
-      JSON::Schema.validate(obj,  SKApi::Resources::CreditNote.schema)
+      JSON::Schema.validate(obj['credit_note'],  SKApi::Resources::CreditNote.schema)
     }.should_not raise_error
   end
 

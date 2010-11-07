@@ -4,7 +4,6 @@ module JSON
   class Schema
     VERSION = '2.0.0'
     class ValueError < Exception;end
-    class SchemaError < Exception;end
     class Undefined;end
     TypesMap = {
       "string"  => String,
@@ -51,6 +50,7 @@ module JSON
           end
           raise ValueError, "disallowed value was matched" if flag
         end
+
         # dont go further for nil values
         return if value.nil?
         if value.instance_of? Array
@@ -215,10 +215,10 @@ module JSON
 
     # Checks the type of a given value
     # === Parameter
-    # value<>
-    # type<>
-    # key<>
-    # parent<>
+    # value<>::
+    # type<>::
+    # key<>::
+    # parent<>::
     def check_type value, type, key, parent
       converted_fieldtype = convert_type(type)
       if converted_fieldtype

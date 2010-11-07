@@ -1,4 +1,4 @@
-require "#{File.dirname(__FILE__)}/../spec_helper"
+require 'spec/spec_helper'
 
 describe SKApi::Resources::Client, "in general" do
 
@@ -84,6 +84,7 @@ describe SKApi::Resources::Client, "with addresses" do
     #setup test client to work with
     @client = SKApi::Resources::Client.new(:organisation=>'Second from testing API2',
                                             :addresses => [{ :zip => '50374', :city => 'Cologne' }] )
+
     @client.save
   end
 

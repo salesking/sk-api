@@ -42,8 +42,8 @@ module SKApi
                 # ex: data['invoice']['client'] = SKApi::Models::Client.to_hash_from_schema(client)
                 data[obj_class_name][field] = klass.to_hash_from_schema(rel_obj)
               end
-            else # a simple field which can be directly called
-              data[obj_class_name][field] = obj.send(field)
+              else # a simple field which can be directly called, only added of objects know its
+              data[obj_class_name][field] = obj.send(field) if obj.respond_to?(field.to_sym)
             end
           end
           data
@@ -52,7 +52,7 @@ module SKApi
         def to_json(obj)
           data = self.to_hash_from_schema(obj)
 #          data[:links] = self.api_links
-          Rufus::Json.encode(data)
+          ActiveSupport::JSON.encode(data)
         end
 
       end #ClassMethods
