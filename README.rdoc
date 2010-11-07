@@ -1,11 +1,9 @@
 = SalesKing Api
 
-This plugin is used internally by SalesKing to deliver the API and 
-can be used externally as an API client. The code is used in production f.ex.at
-https://www.SalesKing, http://texprovider.de and http://planio.de
+This gem provides an api client using ActiveResource and also provides the API's JSON-Schema
+In the near future this will be decoupled and you will find links to the new gems here.
 
-The SalesKing API client uses ActiveResource, with some fixes due to json parsing.
-For now it only supports JSON, XML comes later.
+The SalesKing API client uses JSON and ActiveResource, with some fixes due to json parsing.
 
 To be able to use the API you must have an SalesKing account and API access. 
 Than you can start writing your own middelware-stack.
@@ -16,6 +14,10 @@ if you try to use it please tell us, so we can provide you a login on our dev sy
 and support.
 
     gem install sk-api
+
+Use with bundler
+
+    gem "sk-api", :require => 'sk_api'
 
 == Usage
 
