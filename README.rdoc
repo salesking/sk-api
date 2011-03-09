@@ -1,7 +1,15 @@
 = SalesKing Api
 
-This gem provides an api client using ActiveResource and also provides the API's JSON-Schema
-In the near future this will be decoupled and you will find links to the new gems here.
+This gem provides an api client using ActiveResource. As our schema has evolved this client does not support the full API anymore.
+We have setup a new SDK project https://github.com/salesking/sk_sdk wich will replace this.
+
+The rest of this doc is still valid and should be read, even if you are using another language or your own client.
+
+Additional resources:
+
+* http://dev.blog.salesking.eu/api/
+* https://github.com/salesking/sk_api_schema/tree/master/json/v1.0
+
 
 The SalesKing API client uses JSON and ActiveResource, with some fixes due to json parsing.
 
@@ -53,6 +61,7 @@ http-basic-auth can be used.
 
 * JSONView  FF-Plugin - view json in firefox https://addons.mozilla.org/de/firefox/addon/10869/
 * JSONovich FF-Plugin -  https://addons.mozilla.org/de/firefox/addon/10122/
+* Chrome JSON Viewer: https://chrome.google.com/extensions/search?itemlang=&hl=de&q=json
 * A java GUI REST client http://code.google.com/p/rest-client/
 
 === GET / Show data
@@ -217,19 +226,6 @@ pretty straight forward to use:
     ##### use it
     a = SomeMiddleware.new
     a.create_client('eder')
-
-
-== Salesking API Resources
-
-Right now the following resources are available:
-
-* clients
-* invoices
-* products
-* credit_notes
-
-See classes here:
-http://github.com/salesking/sk-api/tree/master/lib/resources/
 
 == Tests / Specs
 

@@ -29,10 +29,10 @@ describe SKApi::Resources::Product, "in general" do
     product.errors.full_messages.should ==  ["Name can't be blank"]
   end
   
-  it "should fail create a product without price" do
-    product = SKApi::Resources::Product.new(:name => 'No brain')
-    product.save.should == false
-    product.errors.full_messages.should ==  ["Price can't be blank"]
+  it "should fail create a product with empty price" do
+    product = SKApi::Resources::Product.new(:name => 'No brain', :price =>' ')
+    product.save.should be_false
+    product.errors.full_messages.should ==  ["Price can't be blank", "Price is not a number"]
   end
 
   it "should find a product by id" do
