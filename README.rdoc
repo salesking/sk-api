@@ -7,7 +7,7 @@ The rest of this doc is still valid and should be read, even if you are using an
 
 Additional resources:
 
-* http://dev.blog.salesking.eu/api/
+* http://dev.blog.salesking.eu/docs/
 * https://github.com/salesking/sk_api_schema/tree/master/json/v1.0
 
 
@@ -29,7 +29,7 @@ Use with bundler
 
 == Usage
 
-SalesKing's api interface is RESTful(mostly) and returns & accepts JSON data.
+SalesKing's api interface is RESTful(mostly) and talks JSON only.
 All resources such as clients, invoices, products can be accessed via URL's
 through standard HTTP methods GET, POST, PUT and DELETE.
 
@@ -215,7 +215,7 @@ pretty straight forward to use:
 
       def set_api_connection
         SKApi::Resources::Base.set_connection({
-          :site     => 'my_sub.salesking.eu',
+          :site     => 'https://my_sub.salesking.eu',
           :user     => 'demo@salesking.eu',
           :password => 'password',
           :format   => :json # symbol expected
