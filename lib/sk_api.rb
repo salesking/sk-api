@@ -24,5 +24,3 @@ require 'resources/address'
 require 'resources/invoice'
 require 'resources/credit_note'
 require 'resources/line_item'
-
-# TODO before post kick empty fields and readonly's

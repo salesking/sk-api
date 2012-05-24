@@ -1,7 +1,6 @@
 require 'rubygems'
-require 'spec'
+require 'rspec'
 require "#{File.dirname(__FILE__)}/../lib/sk_api"
-require File.dirname(__FILE__) + '/../vendor/jsonschema-1.0.0/lib/jsonschema'
 
 puts "Testing with ActiveResource Version: #{ActiveResource::VERSION::STRING}. Make sure this matches the version in your app. .. Yes this sucks!"
 
@@ -20,6 +19,9 @@ SKApi::CONNECTION = {
     :site => "http://demo.salesking.local:3000/api/",
     :user => "demo@salesking.eu",
     :password => "demo",
+    #:site => "https://demo.dev.salesking.eu/api/",
+    #:user => "demo@salesking.eu",
+    #:password => "",
     :format => :json
   } unless defined?(SKApi::CONNECTION)
 SKApi::Resources::Base.set_connection(SKApi::CONNECTION)

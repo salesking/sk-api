@@ -5,8 +5,11 @@ module ActiveResource
 
     # override ARes method to parse only the client part
     def load_attributes_from_response(response)
-      if response['Content-Length'] != "0" && response.body.strip.size > 0
+      if (response['Transfer-Encoding'] == 'chunked' ||
+          (!response['Content-Length'].blank? && response['Content-Length'] != "0")) &&
+          !response.body.nil? && response.body.strip.size > 0
         load( self.class.format.decode(response.body)[self.class.element_name] )
+        @persisted = true
       end
     end
 

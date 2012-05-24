@@ -1,3 +1,4 @@
-Patches for activerecord as long as the 3.0 version is not out
+Patches for activerecord
 
+* parse nested json responses
 * parse error from json response

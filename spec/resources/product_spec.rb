@@ -1,4 +1,4 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe SKApi::Resources::Product, "in general" do
 
@@ -28,7 +28,7 @@ describe SKApi::Resources::Product, "in general" do
     product.errors.count.should == 1
     product.errors.full_messages.should ==  ["Name can't be blank"]
   end
-  
+
   it "should fail create a product with empty price" do
     product = SKApi::Resources::Product.new(:name => 'No brain', :price =>' ')
     product.save.should be_false
@@ -51,25 +51,7 @@ describe SKApi::Resources::Product, "in general" do
     @product.name = ''
     @product.save.should == false
     @product.errors.count.should == 1
-    @product.errors.on(:name).should ==  "can't be blank"
+    @product.errors.full_messages.should ==  ["Name can't be blank"]
   end
 
-  it "should validate raw json object with schema" do
-    product = SKApi::Resources::Product.find(@product.id)
-    # convert to json and read raw without activeresource assigning classes
-    json = product.to_json
-    obj = ActiveSupport::JSON.decode(json)
-    lambda {
-      JSON::Schema.validate(obj['product'],  SKApi::Resources::Product.schema)
-    }.should_not raise_error
-  end
-
-  it "should validate raw json object with to_hash_with_schema" do
-    product = SKApi::Resources::Product.find(@product.id)
-    # convert to json and read raw without activeresource assigning classes
-    hash_obj =  SKApi::Resources::Product.to_hash_from_schema(product)
-    lambda {
-      JSON::Schema.validate(hash_obj['product'],  SKApi::Resources::Product.schema)
-    }.should_not raise_error
-  end
 end

@@ -1,4 +1,4 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe SKApi::Resources::CreditNote, "in general" do
 
@@ -30,28 +30,12 @@ describe SKApi::Resources::CreditNote, "in general" do
     @doc.notes_before.should_not be_empty
     @doc.new?.should be_false
   end
- 
-  it "should fail create a doc" do
-    doc = SKApi::Resources::CreditNote.new()
-    doc.save.should == false
-    doc.errors.count.should == 1
-    doc.errors.on(:client_id).should == "can't be blank"
-  end
 
   it "should find a doc" do
     doc = SKApi::Resources::CreditNote.find(@doc.id)
     doc.title.should == @doc.title
   end
 
-  it "should validate raw json object with schema" do
-    doc = SKApi::Resources::CreditNote.find(@doc.id)
-    # convert to json and read raw without activeresource assigning classes
-    json = doc.to_json    
-    obj = ActiveSupport::JSON.decode(json)
-    lambda {
-      JSON::Schema.validate(obj['credit_note'],  SKApi::Resources::CreditNote.schema)
-    }.should_not raise_error
-  end
 
   it "should edit a doc" do
 #    @doc.lock_version.should == 0 # dont work cause doc is saved twice, for recalc of totals
@@ -59,17 +43,11 @@ describe SKApi::Resources::CreditNote, "in general" do
     @doc.notes_before = 'You will recieve the amout of:'
     @doc.notes_before = 'Payment made to you bank Account'
     @doc.title = 'Changed doc title'
-    
+
     @doc.save.should be_true
     @doc.lock_version.should > old_lock_version # because save returns the data
   end
 
-  it "should fail edit a doc" do
-    @doc.client_id = ''
-    @doc.save.should == false
-    @doc.errors.count.should == 1
-    @doc.errors.on(:client_id).should == "can't be blank"
-  end
 end
 
 describe SKApi::Resources::CreditNote, "with line items" do

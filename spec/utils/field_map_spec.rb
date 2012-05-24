@@ -1,4 +1,4 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe SKApi::Utils::FieldMap do
 
@@ -8,14 +8,14 @@ describe SKApi::Utils::FieldMap do
     @map = SKApi::Utils::FieldMap.new(@loc_obj, @rem_obj, map_hash)
   end
 
-  it "should create a mapping" do    
+  it "should create a mapping" do
     @map.outdated?.should be_false # both objects are empty
   end
 
-  it "should find outdated fields" do      
+  it "should find outdated fields" do
     @loc_obj.firstname = 'theo'
     @map.outdated?.should be_true
-    @map.outdated.first[:loc_key].should == :firstname    
+    @map.outdated.first[:loc_key].should == :firstname
   end
 
   it "should update outdated remote fields" do

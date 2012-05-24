@@ -1,4 +1,4 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe SKApi::Resources::Invoice, "in general" do
 
@@ -55,13 +55,6 @@ describe SKApi::Resources::Invoice, "a new invoice" do
     doc.destroy
   end
 
-  it "should fail create a doc" do
-    doc = SKApi::Resources::Invoice.new()
-    doc.save.should == false
-    doc.errors.count.should == 1
-    doc.errors.on(:client_id).should == "can't be blank"
-  end
-
 end
 
 describe SKApi::Resources::Invoice, "Edit an invoice" do
@@ -94,12 +87,6 @@ describe SKApi::Resources::Invoice, "Edit an invoice" do
     @doc.notes_before.should == 'You will recieve the amout of:'
   end
 
-  it "should fail edit without a client" do
-    @doc.client_id = ''
-    @doc.save.should == false
-    @doc.errors.count.should == 1
-    @doc.errors.on(:client_id).should == "can't be blank"
-  end
 end
 
 describe SKApi::Resources::Invoice, "with line items" do

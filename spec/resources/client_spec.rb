@@ -1,4 +1,4 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe SKApi::Resources::Client, "in general" do
 
@@ -52,28 +52,7 @@ describe SKApi::Resources::Client, "in general" do
     @client.organisation = ''
     @client.save.should == false
     @client.errors.count.should == 1
-    @client.errors.on_base.should == "Organisation or lastname must be present."
-  end
-
-  it "should validate raw json object with schema" do
-    client = SKApi::Resources::Client.find(@client.id)
-    # convert to json and read raw without activeresource assigning classes
-    json = client.to_json
-    obj = ActiveSupport::JSON.decode(json)
-#     puts obj['client']['organisation']
-    lambda {
-      JSON::Schema.validate(obj['client'],  SKApi::Resources::Client.schema)
-    }.should_not raise_error
-  end
-
-  it "should validate raw json object with to_hash_with_schema" do
-    client = SKApi::Resources::Client.find(@client.id)
-    # convert to json and read raw without activeresource assigning classes
-    hash_obj =  SKApi::Resources::Client.to_hash_from_schema(client)
-#    hash_obj.should == ''
-    lambda {
-      JSON::Schema.validate(hash_obj['client'],  SKApi::Resources::Client.schema)
-    }.should_not raise_error
+    @client.errors.full_messages.should == ["Organisation or lastname must be present."]
   end
 
 end
